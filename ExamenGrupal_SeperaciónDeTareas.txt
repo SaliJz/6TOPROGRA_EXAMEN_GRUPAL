@@ -1,0 +1,4 @@
+Rodrigo - Entidades (clase padre) + Jugador (Clase hijo) y Enemigos (Clase hijo)
+Jorge - Ítems (Clase padre) + ítem de vida (Clase hijo)
+Emerson - Implementar el Unity Graph Toolkit
+Joaquin - Acoplado completo e implementación del comportamiento de situaciones
