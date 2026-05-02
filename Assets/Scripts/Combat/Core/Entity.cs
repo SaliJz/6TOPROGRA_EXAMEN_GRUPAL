@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 using Assets.Scripts.Combat.Interfaces;
 
 namespace Assets.Scripts.Combat.Core
