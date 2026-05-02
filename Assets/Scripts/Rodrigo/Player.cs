@@ -1,8 +1,9 @@
+using Assets.Scripts.Joaquin.Interfaces;
 using System;
 using UnityEngine;
 
 [Serializable]
-public class Player
+public class Player : IHealable
 {
 
     public string PlayerName { get; private set; }

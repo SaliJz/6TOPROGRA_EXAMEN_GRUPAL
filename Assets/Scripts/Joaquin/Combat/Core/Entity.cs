@@ -3,7 +3,7 @@ using Assets.Scripts.Joaquin.Interfaces;
 
 namespace Assets.Scripts.Joaquin.Core
 {
-    public abstract class Entity : ICombatant
+    public abstract class Entity : ICombatant, IHealable
     {
         public string Name { get; protected set; }
         public int CurrentHP { get; protected set; }
@@ -14,9 +14,9 @@ namespace Assets.Scripts.Joaquin.Core
         protected Entity(string name, int maxHP, int damage)
         {
             Name = name;
-            MaxHP = maxHP;
-            CurrentHP = maxHP;
-            Damage = damage;
+            MaxHP = Mathf.Max(1, maxHP);
+            CurrentHP = MaxHP;
+            Damage = Mathf.Max(0, damage);
         }
 
         public virtual int TakeDamage(int amount)
@@ -33,7 +33,12 @@ namespace Assets.Scripts.Joaquin.Core
 
         public virtual void Heal(int amount)
         {
-            CurrentHP = Mathf.Min(MaxHP, CurrentHP + amount);
+            CurrentHP = Mathf.Min(MaxHP, CurrentHP + Mathf.Max(0, amount));
+        }
+
+        public virtual void IncreaseDamage(int amount)
+        {
+            Damage += Mathf.Max(0, amount);
         }
     }
 }

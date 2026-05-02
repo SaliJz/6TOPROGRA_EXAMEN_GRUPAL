@@ -15,7 +15,6 @@ public abstract class Item
         Type = type;
     }
 
-    public abstract void Use(Player player);
     public abstract string GetUseDescription();
     public override string ToString() => $"[{Type}] {Name}: {Description}";
 }

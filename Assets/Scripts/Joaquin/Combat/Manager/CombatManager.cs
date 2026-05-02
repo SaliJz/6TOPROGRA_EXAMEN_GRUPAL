@@ -1,6 +1,5 @@
 ﻿using Assets.Scripts.Joaquin.Core;
 using Assets.Scripts.Joaquin.Interfaces;
-using Assets.Scripts.Joaquin.Items;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,39 +10,51 @@ namespace Assets.Scripts.Joaquin.Manager
     /// </summary>
     public class CombatManager
     {
-        // Participantes 
+        // Clase interna para rastrear buffs correctamente
+        private class BuffEntry
+        {
+            public readonly int BoostValue;
+            public int TurnsRemaining;
+
+            public BuffEntry(int boostValue, int turns)
+            {
+                BoostValue = boostValue;
+                TurnsRemaining = turns;
+            }
+        }
+
+        // Participantes
         private readonly Entity player;
         private readonly Entity enemy;
 
         // Estructuras de datos
         private readonly Queue<System.Action> turnQueue;
         private readonly List<CombatAction> combatLog;
-        private readonly Dictionary<string, int> activeBuffs;
+        private readonly Dictionary<string, BuffEntry> activeBuffs;
         private readonly Stack<CombatAction> playerActionHistory;
 
         // Inventario del jugador
-        private readonly List<Item> playerInventory;
+        private readonly Inventory playerInventory;
 
-        // Estado del combate
+        // Estado
         private bool combatActive;
         private int currentPlayerDamageBoost;
 
-        // Propiedades públicas
+        // Propiedades publicas
         public bool CombatActive => combatActive;
         public IReadOnlyList<CombatAction> CombatLog => combatLog;
         public Entity Player => player;
         public Entity Enemy => enemy;
 
-        // Constructor que inicializa el combate con el jugador, enemigo e inventario
-        public CombatManager(Entity player, Entity enemy, List<Item> playerInventory)
+        public CombatManager(Entity player, Entity enemy, Inventory playerInventory)
         {
             this.player = player;
             this.enemy = enemy;
-            this.playerInventory = playerInventory ?? new List<Item>();
+            this.playerInventory = playerInventory ?? new Inventory();
 
             turnQueue = new Queue<System.Action>();
             combatLog = new List<CombatAction>();
-            activeBuffs = new Dictionary<string, int>();
+            activeBuffs = new Dictionary<string, BuffEntry>();
             playerActionHistory = new Stack<CombatAction>();
 
             combatActive = true;
@@ -51,7 +62,7 @@ namespace Assets.Scripts.Joaquin.Manager
         }
 
         /// <summary>
-        /// Ejecuta el ataque básico del jugador. Retorna el resultado si el combate terminó.
+        /// Ejecuta el ataque basico del jugador.
         /// </summary>
         public CombatResult ExecutePlayerAttack()
         {
@@ -61,7 +72,7 @@ namespace Assets.Scripts.Joaquin.Manager
             var action = new CombatAction(
                 ActionType.Attack,
                 player.Name,
-                $"{player.Name} ataca a {enemy.Name} causando {dealt} de daño.",
+                $"{player.Name} ataca a {enemy.Name} causando {dealt} de dano.",
                 dealt
             );
 
@@ -72,11 +83,16 @@ namespace Assets.Scripts.Joaquin.Manager
         }
 
         /// <summary>
-        /// El jugador usa un item del inventario. Retorna null si el combate continúa.
+        /// El jugador usa un item del inventario.
         /// </summary>
         public CombatResult ExecutePlayerUseItem(Item item)
         {
-            if (!playerInventory.Contains(item)) return null;
+            bool found = false;
+            foreach (var i in playerInventory.Items)
+            {
+                if (i == item) { found = true; break; }
+            }
+            if (!found) return null;
 
             CombatAction action;
 
@@ -84,10 +100,10 @@ namespace Assets.Scripts.Joaquin.Manager
             {
                 RegisterBuff(damagePotion.Name, damagePotion.Boost, damagePotion.DurationTurns);
                 action = new CombatAction(
-                    ActionType.UseItem, 
-                    player.Name, 
-                    damagePotion.GetUseDescription(), 
-                    0, 
+                    ActionType.UseItem,
+                    player.Name,
+                    damagePotion.GetUseDescription(),
+                    0,
                     item
                 );
             }
@@ -95,19 +111,19 @@ namespace Assets.Scripts.Joaquin.Manager
             {
                 usable.Use(player, enemy);
                 action = new CombatAction(
-                    ActionType.UseItem, 
+                    ActionType.UseItem,
                     player.Name,
-                    usable.GetUseDescription(), 
-                    0, 
+                    usable.GetUseDescription(),
+                    0,
                     item
                 );
             }
             else
             {
-                return null; // item no usable
+                return null;
             }
 
-            playerInventory.Remove(item);
+            playerInventory.RemoveItem(item);
             combatLog.Add(action);
             playerActionHistory.Push(action);
 
@@ -115,24 +131,22 @@ namespace Assets.Scripts.Joaquin.Manager
         }
 
         /// <summary>
-        /// El jugador intenta huir del combate.
+        /// El jugador huye del combate.
         /// </summary>
         public CombatResult ExecutePlayerFlee()
         {
             combatActive = false;
             var action = new CombatAction(
-                ActionType.Flee, 
+                ActionType.Flee,
                 player.Name,
                 $"{player.Name} huye del combate."
-                );
-
+            );
             combatLog.Add(action);
-
             return BuildResult(CombatOutcome.PlayerFled);
         }
 
         /// <summary>
-        /// Ejecuta el ataque del enemigo. Retorna el resultado si el combate terminó.
+        /// Ejecuta el ataque del enemigo.
         /// </summary>
         public CombatResult ExecuteEnemyTurn()
         {
@@ -141,7 +155,7 @@ namespace Assets.Scripts.Joaquin.Manager
             var action = new CombatAction(
                 ActionType.Attack,
                 enemy.Name,
-                $"{enemy.Name} ataca a {player.Name} causando {dealt} de daño.",
+                $"{enemy.Name} ataca a {player.Name} causando {dealt} de dano.",
                 dealt
             );
 
@@ -155,11 +169,12 @@ namespace Assets.Scripts.Joaquin.Manager
         {
             if (activeBuffs.ContainsKey(buffName))
             {
-                activeBuffs[buffName] = duration; // reinicia duración
+                currentPlayerDamageBoost -= activeBuffs[buffName].BoostValue;
+                activeBuffs[buffName] = new BuffEntry(boost, duration);
             }
             else
             {
-                activeBuffs[buffName] = duration;
+                activeBuffs[buffName] = new BuffEntry(boost, duration);
             }
 
             currentPlayerDamageBoost += boost;
@@ -169,20 +184,23 @@ namespace Assets.Scripts.Joaquin.Manager
         {
             var expired = new List<string>();
 
-            foreach (var buff in new List<string>(activeBuffs.Keys))
+            foreach (var key in new List<string>(activeBuffs.Keys))
             {
-                activeBuffs[buff]--;
-                if (activeBuffs[buff] <= 0) expired.Add(buff);
+                activeBuffs[key].TurnsRemaining--;
+                if (activeBuffs[key].TurnsRemaining <= 0)
+                    expired.Add(key);
             }
 
-            foreach (var buff in expired)
+            foreach (var key in expired)
             {
-                activeBuffs.Remove(buff);
+                currentPlayerDamageBoost -= activeBuffs[key].BoostValue;
+                activeBuffs.Remove(key);
+
                 combatLog.Add(new CombatAction(
-                    ActionType.UseItem, 
+                    ActionType.UseItem,
                     player.Name,
-                    $"El efecto de {buff} ha terminado.")
-                );
+                    $"El efecto de {key} ha terminado."
+                ));
             }
         }
 
@@ -193,14 +211,12 @@ namespace Assets.Scripts.Joaquin.Manager
                 combatActive = false;
                 return BuildResult(CombatOutcome.PlayerWon);
             }
-
             if (!player.IsAlive)
             {
                 combatActive = false;
                 return BuildResult(CombatOutcome.PlayerLost);
             }
-
-            return null; // El combate continúa
+            return null; // El combate continua
         }
 
         private CombatResult BuildResult(CombatOutcome outcome)
@@ -212,8 +228,15 @@ namespace Assets.Scripts.Joaquin.Manager
             return new CombatResult(outcome, drops, GetCombatSummary());
         }
 
+        /// <summary>
+        /// Obtiene los drops del enemigo si es instancia de Enemy.
+        /// </summary>
         private List<Item> GetEnemyDrops()
         {
+            if (enemy is Enemy e)
+            {
+                return new List<Item>(e.Drops);
+            }
             return new List<Item>();
         }
 
@@ -223,22 +246,45 @@ namespace Assets.Scripts.Joaquin.Manager
             sb.AppendLine("=== Resumen del combate ===");
             foreach (var action in combatLog)
             {
-                sb.AppendLine($"  • {action}");
+                sb.AppendLine($"  * {action}");
             }
             return sb.ToString();
         }
 
         /// <summary>
-        /// Devuelve los items disponibles del jugador que implementan IUsable.
+        /// Retorna solo los items del inventario que implementan IUsable.
         /// </summary>
         public List<Item> GetUsableItems()
         {
             var usable = new List<Item>();
-            foreach (var item in playerInventory)
+            foreach (var item in playerInventory.Items)
             {
                 if (item is IUsable) usable.Add(item);
             }
             return usable;
+        }
+
+        public CombatUIData GetUIData()
+        {
+            string lastLog = combatLog.Count > 0
+                ? combatLog[combatLog.Count - 1].ToString()
+                : string.Empty;
+
+            return new CombatUIData
+            {
+                PlayerName = player.Name,
+                PlayerCurrentHP = player.CurrentHP,
+                PlayerMaxHP = player.MaxHP,
+                PlayerDamage = player.Damage,
+
+                EnemyName = enemy.Name,
+                EnemyCurrentHP = enemy.CurrentHP,
+                EnemyMaxHP = enemy.MaxHP,
+                EnemyDamage = enemy.Damage,
+
+                CombatActive = combatActive,
+                LastLogLine = lastLog
+            };
         }
     }
 }
