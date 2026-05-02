@@ -15,7 +15,7 @@ public class Enemy : MonoBehaviour
 
     public void Attack(Player player)
     {
-        player.Health -= Damage;
+        player.TakeDamage(Damage);
         Debug.Log(Name + " atacó e hizo " + Damage + " de daño");
     }
 
