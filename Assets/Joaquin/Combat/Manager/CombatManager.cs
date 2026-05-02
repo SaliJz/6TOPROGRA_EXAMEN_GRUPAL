@@ -1,10 +1,10 @@
-﻿using Assets.Scripts.Combat.Core;
-using Assets.Scripts.Combat.Interfaces;
-using Assets.Scripts.Combat.Items;
+﻿using Assets.Scripts.Joaquin.Core;
+using Assets.Scripts.Joaquin.Interfaces;
+using Assets.Scripts.Joaquin.Items;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Assets.Scripts.Combat.Manager
+namespace Assets.Scripts.Joaquin.Manager
 {
     /// <summary>
     /// Gestiona el flujo de combate por turnos entre el jugador y un enemigo.

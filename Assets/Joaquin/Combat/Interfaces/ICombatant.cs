@@ -1,5 +1,5 @@
 
-namespace Assets.Scripts.Combat.Interfaces
+namespace Assets.Scripts.Joaquin.Interfaces
 {
     public interface ICombatant
     {

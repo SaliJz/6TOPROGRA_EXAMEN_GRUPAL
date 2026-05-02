@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using Assets.Scripts.Combat.Interfaces;
+using Assets.Scripts.Joaquin.Interfaces;
 
-namespace Assets.Scripts.Combat.Core
+namespace Assets.Scripts.Joaquin.Core
 {
     public abstract class Entity : ICombatant
     {

@@ -1,5 +1,5 @@
 ﻿
-namespace Assets.Scripts.Combat.Core
+namespace Assets.Scripts.Joaquin.Core
 {
     public abstract class Item
     {

@@ -1,7 +1,7 @@
-﻿using Assets.Scripts.Combat.Core;
-using Assets.Scripts.Combat.Interfaces;
+﻿using Assets.Scripts.Joaquin.Core;
+using Assets.Scripts.Joaquin.Interfaces;
 
-namespace Assets.Scripts.Combat.Items
+namespace Assets.Scripts.Joaquin.Items
 {
     public class HealthPotion : Item, IUsable
     {

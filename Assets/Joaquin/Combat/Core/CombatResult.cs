@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Assets.Scripts.Combat.Core
+namespace Assets.Scripts.Joaquin.Core
 {
     public enum CombatOutcome 
     { 

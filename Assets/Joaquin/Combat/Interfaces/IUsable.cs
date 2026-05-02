@@ -1,6 +1,6 @@
-using Assets.Scripts.Combat.Core;
+using Assets.Scripts.Joaquin.Core;
 
-namespace Assets.Scripts.Combat.Interfaces
+namespace Assets.Scripts.Joaquin.Interfaces
 {
     public interface IUsable
     {
