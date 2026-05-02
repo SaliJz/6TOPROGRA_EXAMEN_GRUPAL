@@ -1,4 +1,5 @@
-Rodrigo - Entidades (clase padre) + Jugador (Clase hijo) y Enemigos (Clase hijo)
-Jorge - Ítems (Clase padre) + ítem de vida (Clase hijo)
-Emerson - Implementar el Unity Graph Toolkit
-Joaquin - Acoplado completo e implementación del comportamiento de situaciones
+Rodrigo - Programar el comportamiento del jugador y el inventario.
+Emerson - Programar el comportamiento de los enemigos.
+Jorge 	- Programar los objetos y la integración de los comportamientos.
+Joaquin - Programar el gestor del combate por turnos.
+Gian 	- Programar el gestor de situaciones y el gestor principal.
