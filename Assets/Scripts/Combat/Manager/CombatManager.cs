@@ -16,10 +16,10 @@ namespace Assets.Scripts.Combat.Manager
         private readonly Entity enemy;
 
         // Estructuras de datos
-        private readonly Queue<System.Action> turnQueue;           // cola de turnos
-        private readonly List<CombatAction> combatLog;             // historial completo
-        private readonly Dictionary<string, int> activeBuffs;      // buff y turnos restantes
-        private readonly Stack<CombatAction> playerActionHistory;  // acciones reversibles del jugador
+        private readonly Queue<System.Action> turnQueue;
+        private readonly List<CombatAction> combatLog;
+        private readonly Dictionary<string, int> activeBuffs;
+        private readonly Stack<CombatAction> playerActionHistory;
 
         // Inventario del jugador
         private readonly List<Item> playerInventory;
@@ -34,6 +34,7 @@ namespace Assets.Scripts.Combat.Manager
         public Entity Player => player;
         public Entity Enemy => enemy;
 
+        // Constructor que inicializa el combate con el jugador, enemigo e inventario
         public CombatManager(Entity player, Entity enemy, List<Item> playerInventory)
         {
             this.player = player;
