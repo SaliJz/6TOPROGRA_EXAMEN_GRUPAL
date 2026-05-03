@@ -10,52 +10,58 @@ using Assets.Scripts.Joaquin.Manager;
 /// </summary>
 public class CombatUI : MonoBehaviour
 {
-    // Panel jugador
+    #region Public Properties & Events
+
+    public event System.Action OnAttackPressed;
+    public event System.Action OnFleePressed;
+    public event System.Action<Item> OnItemSelected;
+    public event System.Action OnResultContinuePressed;
+
+    #endregion
+
+    #region Inspector - References
+
     [Header("Panel Jugador")]
     [SerializeField] private TextMeshProUGUI txtPlayerName;
     [SerializeField] private TextMeshProUGUI txtPlayerHP;
     [SerializeField] private TextMeshProUGUI txtPlayerDamage;
     [SerializeField] private Slider sliderPlayerHP;
 
-    // Panel enemigo
     [Header("Panel Enemigo")]
     [SerializeField] private TextMeshProUGUI txtEnemyName;
     [SerializeField] private TextMeshProUGUI txtEnemyHP;
     [SerializeField] private Slider sliderEnemyHP;
 
-    // Log de combate
     [Header("Log de Combate")]
     [SerializeField] private TextMeshProUGUI txtCombatLog;
     [SerializeField] private ScrollRect scrollLog;
 
-    // Botones de accion
     [Header("Botones de Accion")]
     [SerializeField] private Button btnAttack;
     [SerializeField] private Button btnUseItem;
     [SerializeField] private Button btnFlee;
 
-    // Panel de seleccion de items
     [Header("Panel de Items")]
     [SerializeField] private GameObject panelItems;
     [SerializeField] private Transform itemListContainer;
     [SerializeField] private GameObject itemButtonPrefab;
     [SerializeField] private Button btnCloseItems;
 
-    // Panel de resultado
     [Header("Panel de Resultado")]
     [SerializeField] private GameObject panelResult;
     [SerializeField] private TextMeshProUGUI txtResultTitle;
     [SerializeField] private TextMeshProUGUI txtResultBody;
     [SerializeField] private Button btnResultContinue;
 
-    // Estado interno
+    #endregion
+
+    #region Internal State
+
     private string fullLog = string.Empty;
 
-    // Eventos
-    public event System.Action OnAttackPressed;
-    public event System.Action OnFleePressed;
-    public event System.Action<Item> OnItemSelected;
-    public event System.Action OnResultContinuePressed;
+    #endregion
+
+    #region Unity Lifecycle
 
     private void Awake()
     {
@@ -68,6 +74,10 @@ public class CombatUI : MonoBehaviour
         panelItems.SetActive(false);
         panelResult.SetActive(false);
     }
+
+    #endregion
+
+    #region UI Synchronization & Updates
 
     /// <summary>
     /// CombatController llama este metodo cada vez que el estado cambia.
@@ -97,6 +107,17 @@ public class CombatUI : MonoBehaviour
         SetActionButtonsInteractable(data.CombatActive);
     }
 
+    private void SetActionButtonsInteractable(bool value)
+    {
+        btnAttack.interactable = value;
+        btnUseItem.interactable = value;
+        btnFlee.interactable = value;
+    }
+
+    #endregion
+
+    #region Combat Log Management
+
     public void AppendLog(string line)
     {
         fullLog += $"\n> {line}";
@@ -115,6 +136,10 @@ public class CombatUI : MonoBehaviour
         fullLog = string.Empty;
         txtCombatLog.text = string.Empty;
     }
+
+    #endregion
+
+    #region Item Panel Logic
 
     public void PopulateItemPanel(List<Item> usableItems)
     {
@@ -150,6 +175,10 @@ public class CombatUI : MonoBehaviour
     public void ShowItemPanel() => panelItems.SetActive(true);
     public void HideItemPanel() => panelItems.SetActive(false);
 
+    #endregion
+
+    #region Result Panel Logic
+
     /// <summary>
     /// Muestra el resultado del combate con titulo y cuerpo descriptivo.
     /// </summary>
@@ -164,10 +193,5 @@ public class CombatUI : MonoBehaviour
 
     public void HideResult() => panelResult.SetActive(false);
 
-    private void SetActionButtonsInteractable(bool value)
-    {
-        btnAttack.interactable = value;
-        btnUseItem.interactable = value;
-        btnFlee.interactable = value;
-    }
+    #endregion
 }

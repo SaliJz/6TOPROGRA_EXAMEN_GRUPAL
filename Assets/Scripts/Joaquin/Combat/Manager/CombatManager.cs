@@ -10,6 +10,8 @@ namespace Assets.Scripts.Joaquin.Manager
     /// </summary>
     public class CombatManager
     {
+        #region Internal Classes
+
         // Clase interna para rastrear buffs correctamente
         private class BuffEntry
         {
@@ -22,6 +24,10 @@ namespace Assets.Scripts.Joaquin.Manager
                 TurnsRemaining = turns;
             }
         }
+
+        #endregion
+
+        #region Internal State
 
         // Participantes
         private readonly Entity player;
@@ -40,11 +46,19 @@ namespace Assets.Scripts.Joaquin.Manager
         private bool combatActive;
         private int currentPlayerDamageBoost;
 
+        #endregion
+
+        #region Public Properties
+
         // Propiedades publicas
         public bool CombatActive => combatActive;
         public IReadOnlyList<CombatAction> CombatLog => combatLog;
         public Entity Player => player;
         public Entity Enemy => enemy;
+
+        #endregion
+
+        #region Initialization
 
         public CombatManager(Entity player, Entity enemy, Inventory playerInventory)
         {
@@ -60,6 +74,10 @@ namespace Assets.Scripts.Joaquin.Manager
             combatActive = true;
             currentPlayerDamageBoost = 0;
         }
+
+        #endregion
+
+        #region Player Turn Logic
 
         /// <summary>
         /// Ejecuta el ataque basico del jugador.
@@ -145,6 +163,10 @@ namespace Assets.Scripts.Joaquin.Manager
             return BuildResult(CombatOutcome.PlayerFled);
         }
 
+        #endregion
+
+        #region Enemy Turn Logic
+
         /// <summary>
         /// Ejecuta el ataque del enemigo.
         /// </summary>
@@ -164,6 +186,10 @@ namespace Assets.Scripts.Joaquin.Manager
 
             return CheckCombatEnd();
         }
+
+        #endregion
+
+        #region Buff Management
 
         private void RegisterBuff(string buffName, int boost, int duration)
         {
@@ -204,6 +230,10 @@ namespace Assets.Scripts.Joaquin.Manager
             }
         }
 
+        #endregion
+
+        #region Combat Resolution
+
         private CombatResult CheckCombatEnd()
         {
             if (!enemy.IsAlive)
@@ -239,6 +269,10 @@ namespace Assets.Scripts.Joaquin.Manager
             }
             return new List<Item>();
         }
+
+        #endregion
+
+        #region UI & Data Access
 
         public string GetCombatSummary()
         {
@@ -286,5 +320,7 @@ namespace Assets.Scripts.Joaquin.Manager
                 LastLogLine = lastLog
             };
         }
+
+        #endregion
     }
 }

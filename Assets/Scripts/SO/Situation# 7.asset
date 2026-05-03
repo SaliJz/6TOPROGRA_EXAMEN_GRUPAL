@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a95ab51ffa0971c4c981882de62d205b, type: 3}
+  m_Name: Situation# 7
+  m_EditorClassIdentifier: Assembly-CSharp::SituationData
+  descriptionES: Espejo que muestra el peor miedo
+  descriptionEN: A mirror that reveals one's deepest fear
+  type: 1
+  options:
+  - labelES: Enfrentarlo
+    labelEN: 'Face it '
+    effect:
+      hpChange: 20
+      damageChange: 0
+      itemsGiven: []
+      karmaChange: 2
+    nextSituationIndex: 8
+  - labelES: 'Romperlo '
+    labelEN: 'Break it '
+    effect:
+      hpChange: -10
+      damageChange: 0
+      itemsGiven: []
+      karmaChange: -2
+    nextSituationIndex: 8
+  enemyData: {fileID: 0}

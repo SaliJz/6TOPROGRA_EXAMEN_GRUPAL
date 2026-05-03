@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a95ab51ffa0971c4c981882de62d205b, type: 3}
+  m_Name: Situation# 4
+  m_EditorClassIdentifier: Assembly-CSharp::SituationData
+  descriptionES: Libros que brillan
+  descriptionEN: Books That Shine
+  type: 1
+  options:
+  - labelES: "Leer el libro de sabidur\xEDa"
+    labelEN: Read the Book of Wisdom
+    effect:
+      hpChange: 0
+      damageChange: 5
+      itemsGiven: []
+      karmaChange: 1
+    nextSituationIndex: 5
+  - labelES: 'Quemar los libros '
+    labelEN: 'Burn the books '
+    effect:
+      hpChange: 0
+      damageChange: 0
+      itemsGiven: []
+      karmaChange: -2
+    nextSituationIndex: 5
+  enemyData: {fileID: 0}

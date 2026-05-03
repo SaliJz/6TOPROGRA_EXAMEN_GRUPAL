@@ -6,8 +6,14 @@ using UnityEngine;
 
 public class CombatController : MonoBehaviour
 {
+    #region Inspector - References
+
     [Header("Referencia a la UI de combate")]
     [SerializeField] private CombatUI combatUI;
+
+    #endregion
+
+    #region Internal State
 
     // Estado interno
     private CombatManager combatManager;
@@ -18,6 +24,10 @@ public class CombatController : MonoBehaviour
 
     // Bloqueo durante animacion de turno
     private bool processingTurn = false;
+
+    #endregion
+
+    #region Unity Lifecycle
 
     private void Awake()
     {
@@ -34,6 +44,10 @@ public class CombatController : MonoBehaviour
         combatUI.OnItemSelected -= HandleItemSelected;
         combatUI.OnResultContinuePressed -= HandleResultContinue;
     }
+
+    #endregion
+
+    #region Initialization & Data Sync
 
     /// <summary>
     /// Punto de entrada publico.
@@ -54,6 +68,10 @@ public class CombatController : MonoBehaviour
         RefreshUI();
         combatUI.AppendLog($"Encuentras a {enemy.Name}. El combate comienza!");
     }
+
+    #endregion
+
+    #region Input Handling & Turn Logic
 
     private void HandleAttack()
     {
@@ -103,6 +121,10 @@ public class CombatController : MonoBehaviour
         else processingTurn = false;
     }
 
+    #endregion
+
+    #region Combat Resolution
+
     private void HandleResultContinue()
     {
         combatListener?.OnCombatEnded(
@@ -130,7 +152,7 @@ public class CombatController : MonoBehaviour
         processingTurn = false;
     }
 
-    private void BuildResultText(CombatResult result, 
+    private void BuildResultText(CombatResult result,
         out string title, out string body, out string btnLabel)
     {
         switch (result.Outcome)
@@ -170,11 +192,19 @@ public class CombatController : MonoBehaviour
         return sb.ToString();
     }
 
+    #endregion
+
+    #region UI Synchronization
+
     private void RefreshUI()
     {
         combatUI.Refresh(combatManager.GetUIData());
         combatUI.PopulateItemPanel(combatManager.GetUsableItems());
     }
+
+    #endregion
+
+    #region Helper Methods
 
     private bool CanAct()
     {
@@ -186,4 +216,6 @@ public class CombatController : MonoBehaviour
         if (combatManager == null || !combatManager.CombatActive) return false;
         return true;
     }
+
+    #endregion
 }

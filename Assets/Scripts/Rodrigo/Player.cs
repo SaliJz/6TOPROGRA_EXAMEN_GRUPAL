@@ -26,6 +26,7 @@ public class Player : IHealable
         Damage = Mathf.Max(1, damage);
         Inventory = new Inventory();
     }
+
     public void TakeDamage(int amount)
     {
         if (!IsAlive) return;
